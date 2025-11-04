@@ -28,10 +28,12 @@ else
 fi
 $SED -i 's/"QEMUQEQEMUQEMU/"ASUSASASUSASUS/g' hw/acpi/core.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/acpi/core.c
-$SED -i 's/QEMU N800/'${BRAND}' N800/g' hw/arm/nseries.c
-$SED -i 's/QEMU LCD panel/'${BRAND}' LCD panel/g' hw/arm/nseries.c
-$SED -i 's/strcpy((void *) w, "QEMU ")/strcpy((void *) w, "'${BRAND}' ")/g' hw/arm/nseries.c
-$SED -i 's/"1.1.10-qemu" : "1.1.6-qemu"/"1.1.10-asus" : "1.1.6-asus"/g' hw/arm/nseries.c
+if [ -f hw/arm/nseries.c ]; then
+    $SED -i 's/QEMU N800/'${BRAND}' N800/g' hw/arm/nseries.c
+    $SED -i 's/QEMU LCD panel/'${BRAND}' LCD panel/g' hw/arm/nseries.c
+    $SED -i 's/strcpy((void *) w, "QEMU ")/strcpy((void *) w, "'${BRAND}' ")/g' hw/arm/nseries.c
+    $SED -i 's/"1.1.10-qemu" : "1.1.6-qemu"/"1.1.10-asus" : "1.1.6-asus"/g' hw/arm/nseries.c
+fi
 $SED -i "s/QEMU 'SBSA Reference' ARM Virtual Machine/"${BRAND}" 'SBSA Reference' ARM Real Machine/g" hw/arm/sbsa-ref.c
 $SED -i 's/QEMU Sun Mouse/'${BRAND}' Sun Mouse/g' hw/char/escc.c
 $SED -i 's/info->vendor = "RHT"/info->vendor = "DEL"/g' hw/display/edid-generate.c
