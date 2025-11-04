@@ -168,4 +168,7 @@ $SED -i 's/dev = aml_device("PCI0");/aml_append(sb_scope, aml_name_decl("OSYS", 
 #$SED -i 's/0x0627/0x6666/g' hw/input/virtio-input-hid.c # 0x0627=QEMU tablet USB keyboard and mouse may have minor issues.
 #$SED -i 's/0x0627/0x6666/g' hw/usb/dev-hid.c # 0x0627=QEMU tablet USB keyboard and mouse may have minor issues.
 
+# BIOS Version suffix
+$SED -i "s/prebuilt.qemu.org/${BRAND}/g" roms/Makefile
+
 $SED -i "s/0x46f4/${BRAND_CRC16}/g" **/*.c
