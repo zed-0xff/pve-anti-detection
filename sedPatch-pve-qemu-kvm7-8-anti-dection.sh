@@ -8,7 +8,8 @@ SED=${SED:=sed}
 BRAND="DELL" # 4 letters only!
 BRAND_CRC16="0x1030"
 
-echo "开始sed工作"
+$SED -Ei "s/(QEMU|KVM) Virtual/${BRAND}/g" **/*.c
+
 $SED -i 's/QEMU v" QEMU_VERSION/'${BRAND}' v" QEMU_VERSION/g' block/vhdx.c
 $SED -i 's/QEMU VVFAT", 10/'${BRAND}' VVFAT", 10/g' block/vvfat.c
 $SED -i 's/QEMU Microsoft Mouse/'${BRAND}' Microsoft Mouse/g' chardev/msmouse.c
@@ -46,7 +47,6 @@ else
 	$SED -i '/create fw_cfg node/,/}/s/{/\/*{/g' hw/i386/acpi-build.c
 fi
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/i386/fw_cfg.c
-$SED -i 's/"QEMU Virtual CPU/"CPU/g' hw/i386/pc.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/i386/pc_piix.c
 $SED -i 's/Standard PC (i440FX + PIIX, 1996)/'${BRAND}' M4A88TD-Mi440fx/g' hw/i386/pc_piix.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/i386/pc_q35.c
@@ -80,8 +80,6 @@ $SED -i 's/"QEMU/"'${BRAND}'/g' hw/pci-host/gpex.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/ppc/prep.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/ppc/e500plat.c
 $SED -i 's/qemu-e500/asus-e500/g' hw/ppc/e500plat.c
-$SED -i 's/"QEMU Virtual/"'${BRAND}'/g' hw/riscv/virt.c
-$SED -i 's/"KVM Virtual/"'${BRAND}'/g' hw/riscv/virt.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/riscv/virt.c
 $SED -i 's/s16s8s16s16s16/s11s4s51s41s91/g' hw/scsi/mptconfig.c
 $SED -i 's/QEMU MPT Fusion/'${BRAND}' MPT Fusion/g' hw/scsi/mptconfig.c
@@ -169,4 +167,3 @@ $SED -i 's/dev = aml_device("PCI0");/aml_append(sb_scope, aml_name_decl("OSYS", 
 #$SED -i 's/0x0627/0x6666/g' hw/usb/dev-hid.c # 0x0627=QEMU tablet USB keyboard and mouse may have minor issues.
 
 $SED -i "s/0x46f4/${BRAND_CRC16}/g" **/*.c
-echo "结束sed工作"
