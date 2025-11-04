@@ -141,8 +141,7 @@ $SED -i 's/"QEMU/"'${BRAND}'/g' migration/migration.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' migration/rdma.c
 $SED -i 's/0x51454d5520434647ULL/0x4155535520434647ULL/g' pc-bios/optionrom/optionrom.h
 $SED -i 's/"QEMU/"'${BRAND}'/g' pc-bios/s390-ccw/virtio-scsi.h
-$SED -i 's/"QEMU/"'${BRAND}'/g' roms/seabios/src/fw/ssdt-misc.dsl
-$SED -i 's/"QEMU/"'${BRAND}'/g' roms/seabios-hppa/src/fw/ssdt-misc.dsl
+$SED -i 's/"QEMU/"'${BRAND}'/g' **/ssdt-misc.dsl # roms/seabios-hppa/src/fw/ssdt-misc.dsl
 $SED -i 's/KVMKVMKVM\\0\\0\\0/\\1\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0/g' target/i386/kvm/kvm.c
 $SED -i 's/QEMUQEMUQEMUQEMU/ASUSASUSASUSASUS/g' target/s390x/tcg/misc_helper.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' target/s390x/tcg/misc_helper.c
