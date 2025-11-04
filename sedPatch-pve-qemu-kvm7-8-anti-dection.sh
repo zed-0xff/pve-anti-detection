@@ -3,10 +3,28 @@
 #This script is based on the open-source project https://github.com/zhaodice/proxmox-ve-anti-detection, handling repetitive tasks.
 #Authors: Li Xiaoliu & DadaShuai666 Produced on August 24, 2024 https://space.bilibili.com/565938745
 
-SED=${SED:=sed}
-
 BRAND="DELL" # 4 letters only!
 BRAND_CRC16="0x1030"
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    SED=${SED:=gsed}
+else
+    SED=${SED:=sed}
+fi
+
+check=$(echo TEST | $SED -E 's/TE(S)T/OK/g')
+if [ "$check" != "OK" ]; then
+    echo $SED check failed. please check if you have correct sed installed
+    exit 1
+fi
+
+# enable ** recursive matching
+shopt -s globstar >& /dev/null || {
+    # OSX default bash 3.2 does not support 'globstar' option, so try with homebrew one
+    if [ -x /opt/homebrew/bin/bash -a "$BASH" != /opt/homebrew/bin/bash ]; then
+        exec /opt/homebrew/bin/bash $0
+    fi
+}
 
 $SED -Ei "s/(QEMU|KVM) Virtual/${BRAND}/g" **/*.c
 
@@ -20,34 +38,36 @@ $SED -i 's/desc->oem_table_id/ACPI_BUILD_APPNAME8/g' hw/acpi/aml-build.c
 $SED -i 's/array, ACPI_BUILD_APPNAME8/array, "PTL "/g' hw/acpi/aml-build.c
 $SED -i 's/"QEMU/"Intel/g' hw/acpi/aml-build.c
 
-grep "do this once" hw/acpi/vmgenid.c >/dev/null
-if [ $? -eq 0 ]; then
+if grep -q "do this once" hw/acpi/vmgenid.c; then
 	echo "hw/acpi/vmgenid.c is already patched! skipping"
 else
 	$SED -i 's/    Aml \*ssdt/       \/\/FUCK YOU~~~\n       return;\/\/do this once\n    Aml \*ssdt/g' hw/acpi/vmgenid.c
 fi
+
 $SED -i 's/"QEMUQEQEMUQEMU/"ASUSASASUSASUS/g' hw/acpi/core.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/acpi/core.c
+
 if [ -f hw/arm/nseries.c ]; then
     $SED -i 's/QEMU N800/'${BRAND}' N800/g' hw/arm/nseries.c
     $SED -i 's/QEMU LCD panel/'${BRAND}' LCD panel/g' hw/arm/nseries.c
     $SED -i 's/strcpy((void *) w, "QEMU ")/strcpy((void *) w, "'${BRAND}' ")/g' hw/arm/nseries.c
     $SED -i 's/"1.1.10-qemu" : "1.1.6-qemu"/"1.1.10-asus" : "1.1.6-asus"/g' hw/arm/nseries.c
 fi
+
 $SED -i "s/QEMU 'SBSA Reference' ARM Virtual Machine/"${BRAND}" 'SBSA Reference' ARM Real Machine/g" hw/arm/sbsa-ref.c
 $SED -i 's/QEMU Sun Mouse/'${BRAND}' Sun Mouse/g' hw/char/escc.c
 $SED -i 's/info->vendor = "RHT"/info->vendor = "DEL"/g' hw/display/edid-generate.c
 $SED -i 's/QEMU Monitor/'${BRAND}' Monitor/g' hw/display/edid-generate.c
 $SED -i 's/uint16_t model_nr = 0x1234;/uint16_t model_nr = 0xA05F;/g' hw/display/edid-generate.c
 
-grep "do this once" hw/i386/acpi-build.c >/dev/null
-if [ $? -eq 0 ]; then
+if grep -q "do this once" hw/i386/acpi-build.c; then
 	echo "hw/i386/acpi-build.c is already patched! skipping"
 else
 	$SED -i '/static void build_dbg_aml(Aml \*table)/,/ /s/{/{\n     return;\/\/do this once/g' hw/i386/acpi-build.c
 	$SED -i '/create fw_cfg node/,/}/s/}/}*\//g' hw/i386/acpi-build.c
 	$SED -i '/create fw_cfg node/,/}/s/{/\/*{/g' hw/i386/acpi-build.c
 fi
+
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/i386/fw_cfg.c
 $SED -i 's/"QEMU/"'${BRAND}'/g' hw/i386/pc_piix.c
 $SED -i 's/Standard PC (i440FX + PIIX, 1996)/'${BRAND}' M4A88TD-Mi440fx/g' hw/i386/pc_piix.c
