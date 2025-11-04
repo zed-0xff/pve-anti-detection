@@ -189,5 +189,6 @@ $SED -i 's/dev = aml_device("PCI0");/aml_append(sb_scope, aml_name_decl("OSYS", 
 
 # BIOS Version suffix
 $SED -i "s/prebuilt.qemu.org/${BRAND}/g" roms/Makefile
+$SED -Ei "s/^#define CPUID_EXT_HYPERVISOR .+$/#define CPUID_EXT_HYPERVISOR 0/" target/i386/cpu.h
 
 $SED -i "s/0x46f4/${BRAND_CRC16}/g" **/*.c
